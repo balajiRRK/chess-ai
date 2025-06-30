@@ -75,7 +75,7 @@ class Chess:
         return   
 
     def select_piece(self, y, x):
-        # if piece exists on clicked square and if players_turn matches the color of the piece selected
+        # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
         if self.board[y][x] is not None and self.players_turn == self.board[y][x][0]:
             self.selected_pos = y, x
             pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 2)
@@ -88,8 +88,9 @@ class Chess:
             (color, type) = self.board[prev_y][prev_x]
             if type == 'pawn':
                 if abs(y - prev_y) <= 2 and abs(x - prev_x) == 0:
-                    self.board[y][x] = self.board[prev_y][prev_x]
-                    self.board[prev_y][prev_x] = None
+                    if y != prev_y or x != prev_x:
+                        self.board[y][x] = self.board[prev_y][prev_x]
+                        self.board[prev_y][prev_x] = None
 
                 
 
