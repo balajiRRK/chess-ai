@@ -1,4 +1,5 @@
 import pygame
+from piece import King, Queen, Rook, Bishop, Knight, Pawn 
 
 pygame.init()
 
@@ -39,13 +40,14 @@ class Chess:
         self.board = [[None for _ in range(8)] for _ in range(8)]
 
         # Initial positions for each piece type
-        piece_order = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook']
-        for x in range(8):
-            self.board[0][x] = ('black', piece_order[x])
-            self.board[1][x] = ('black', 'pawn')
+        piece_order = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+
+        for x, PieceClass in enumerate(piece_order):
+            self.board[0][x] = PieceClass('black')
+            self.board[1][x] = Pawn('black')
             # `None` inbetween
-            self.board[6][x] = ('white', 'pawn')
-            self.board[7][x] = ('white', piece_order[x])
+            self.board[6][x] = Pawn('white')
+            self.board[7][x] = PieceClass('white')
 
         # draw board state
 
@@ -70,13 +72,12 @@ class Chess:
             for x in range(8):
                 piece = self.board[y][x]
                 if piece is not None:
-                    color, type = piece
-                    self.window.blit(self.pieces[color][type], (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE))
+                    self.window.blit(self.pieces[piece.color][piece.type], (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE))
         return   
 
     def select_piece(self, y, x):
         # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
-        if self.board[y][x] is not None and self.players_turn == self.board[y][x][0]:
+        if self.board[y][x] is not None and self.players_turn == self.board[y][x].color:
             self.selected_pos = y, x
             pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 2)
         return
@@ -84,23 +85,16 @@ class Chess:
     def drop_piece(self, y, x):
         if self.selected_pos is not None:
             prev_y, prev_x = self.selected_pos
+            piece = self.board[prev_y][prev_x]
 
-            (color, type) = self.board[prev_y][prev_x]
-            if type == 'pawn':
-                if abs(y - prev_y) <= 2 and abs(x - prev_x) == 0:
-                    if y != prev_y or x != prev_x:
-                        self.board[y][x] = self.board[prev_y][prev_x]
-                        self.board[prev_y][prev_x] = None
-
-                
+            if piece.is_valid_move(self.board, (prev_y, prev_x), (y, x)):
+                if y != prev_y or x != prev_x:
+                    self.board[y][x] = self.board[prev_y][prev_x]
+                    self.board[prev_y][prev_x] = None
+                    piece.has_moved = True
 
             self.draw_board()
             self.draw_pieces()
-
-    def move(self):
-            
-
-        return
 
 # ------- MANUAL Chess -------
 
@@ -117,15 +111,11 @@ if __name__ == "__main__":
                 pos = pygame.mouse.get_pos()
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.select_piece(y, x)
-                
-                print(f"Clicked on block (y, x) format: ({y}, {x}) ")
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.drop_piece(y, x)
-            
-
 
         pygame.display.flip()
 
