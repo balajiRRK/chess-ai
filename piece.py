@@ -16,8 +16,8 @@ class King(Piece):
         super().__init__(color, 'king')
 
     def is_valid_move(self, board, start, end):
-        dx = abs(start[0] - end[0])
-        dy = abs(start[1] - end[1])
+        dy = abs(start[0] - end[0])
+        dx = abs(start[1] - end[1])
 
         return max(dx, dy) == 1
     
@@ -33,8 +33,8 @@ class Rook(Piece):
         super().__init__(color, 'rook')
 
     def is_valid_move(self, board, start, end):
-        dx = abs(start[0] - end[0])
-        dy = abs(start[1] - end[1])
+        dy = abs(start[0] - end[0])
+        dx = abs(start[1] - end[1])
 
         return True if (dx != 0 and dy == 0) or (dx == 0 and dy != 0) else False
 
@@ -43,8 +43,8 @@ class Bishop(Piece):
         super().__init__(color, 'bishop')
 
     def is_valid_move(self, board, start, end):
-        dx = abs(start[0] - end[0])
-        dy = abs(start[1] - end[1])
+        dy = abs(start[0] - end[0])
+        dx = abs(start[1] - end[1])
 
         return True if dy == dx else False
 
@@ -53,6 +53,9 @@ class Knight(Piece):
         super().__init__(color, 'knight')
 
     def is_valid_move(self, board, start, end):
+        dy = start[0] - end[0]
+        dx = abs(start[1] - end[1])
+
         return False
 
 class Pawn(Piece):
