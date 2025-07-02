@@ -64,11 +64,26 @@ class Pawn(Piece):
 
     def is_valid_move(self, board, start, end):
         dy = start[0] - end[0]
+        if self.color == 'black':
+            dy = -dy
         dx = abs(start[1] - end[1])
 
-        if not self.has_moved:
-            return True if (dy == 1 or dy == 2) and dx == 0 else False
-        else:
-            return True if dy == 1 and dx == 0 else False
+        
+
+
+        if dx == 0: # moving vertically
+            if board[end[0]][end[1]] is None:
+                if not self.has_moved:
+                    return True if (dy == 1 or dy == 2) else False
+                else:
+                    return True if dy == 1 and dx == 0 else False
+        else: # capturing
+            if board[end[0]][end[1]] is not None:
+                return True if dy == 1 and dx == 1 else False
+
+
+
+
+
 
     

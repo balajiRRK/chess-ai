@@ -54,6 +54,32 @@ class Chess:
         self.draw_board()
         self.draw_pieces()
 
+
+    def select_piece(self, y, x):
+        # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
+        if self.board[y][x] is not None and self.players_turn == self.board[y][x].color:
+            self.selected_pos = y, x
+            pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 2)
+        return
+    
+    def drop_piece(self, y, x):
+        if self.selected_pos is not None:
+            prev_y, prev_x = self.selected_pos
+            piece = self.board[prev_y][prev_x]
+
+            if piece.is_valid_move(self.board, (prev_y, prev_x), (y, x)):
+                print("valid move")
+                if y != prev_y or x != prev_x:
+                    self.board[y][x] = self.board[prev_y][prev_x]
+                    self.board[prev_y][prev_x] = None
+                    piece.has_moved = True
+                self.update_player_turn()   
+
+            self.selected_pos = None
+            self.draw_board()
+            self.draw_pieces()
+
+
     def draw_board(self):
         brown = (180, 135, 98)
         white = (255, 255, 255)
@@ -74,27 +100,13 @@ class Chess:
                 if piece is not None:
                     self.window.blit(self.pieces[piece.color][piece.type], (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE))
         return   
-
-    def select_piece(self, y, x):
-        # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
-        if self.board[y][x] is not None and self.players_turn == self.board[y][x].color:
-            self.selected_pos = y, x
-            pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 2)
-        return
     
-    def drop_piece(self, y, x):
-        if self.selected_pos is not None:
-            prev_y, prev_x = self.selected_pos
-            piece = self.board[prev_y][prev_x]
+    def update_player_turn(self):
+        if self.players_turn == 'white':
+            self.players_turn = 'black'
+        else:
+            self.players_turn = 'white'
 
-            if piece.is_valid_move(self.board, (prev_y, prev_x), (y, x)):
-                if y != prev_y or x != prev_x:
-                    self.board[y][x] = self.board[prev_y][prev_x]
-                    self.board[prev_y][prev_x] = None
-                    piece.has_moved = True
-
-            self.draw_board()
-            self.draw_pieces()
 
 # ------- MANUAL Chess -------
 
