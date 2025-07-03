@@ -43,20 +43,71 @@ class Bishop(Piece):
         super().__init__(color, 'bishop')
 
     def is_valid_move(self, board, start, end):
-        dy = abs(start[0] - end[0])
-        dx = abs(start[1] - end[1])
+        dy = start[0] - end[0]
+        dx = start[1] - end[1]
 
-        return True if dy == dx else False
+        print(f"(dy, dx): ({dy}, {dx})")
+        print(dy > 0 and dx < 0)
+        if abs(dy) == abs(dx):
+
+            has_obstacle = False
+            if dy > 0 and dx > 0:
+                for i in range(1, dy+1): # inclusive so it doesn't capture same-color pieces
+                    print(f"(dy, dx): ({dy}, {dx})")
+                    print(f"({start[0] - i}, {start[1] - i})")
+                    print(board[start[0] - i][start[1] - i])
+                    if board[start[0] - i][start[1] - i] is not None and board[start[0] - i][start[1] - i].color == self.color:
+                        has_obstacle = True
+                        print("has obstacle")
+                        print("")
+
+            elif dy > 0 and dx < 0:
+                print("right if branch ran")
+                for i in range(1, dy+1):
+                    print(f"(dy, dx): ({dy}, {dx})")
+                    print(f"({start[0] - i}, {start[1] + i})")
+                    print(board[start[0] - i][start[1] + i])
+                    if board[start[0] - i][start[1] + i] is not None and board[start[0] - i][start[1] + i].color == self.color:
+                        has_obstacle = True
+                        print("has obstacle")
+                        print("")
+
+            elif dy < 0 and dx < 0:
+                for i in range(1, abs(dy)+1):
+                    print(f"(dy, dx): ({dy}, {dx})")
+                    print(f"({start[0] - i}, {start[1] - i})")
+                    print(board[start[0] - i][start[1] - i])
+                    if board[start[0] + i][start[1] + i] is not None and board[start[0] + i][start[1] + i].color == self.color:
+                        has_obstacle = True
+                        print("has obstacle")
+                        print("")
+            
+            elif dy < 0 and dx > 0:
+                for i in range(1, abs(dy)+1):
+                    print(f"(dy, dx): ({dy}, {dx})")
+                    print(f"({start[0] - i}, {start[1] - i})")
+                    print(board[start[0] - i][start[1] - i])
+                    if board[start[0] + i][start[1] - i] is not None and board[start[0] + i][start[1] - i].color == self.color:
+                        has_obstacle = True
+                        print("has obstacle")
+                        print("")
+
+
+        return True if abs(dy) == abs(dx) and not has_obstacle else False
 
 class Knight(Piece):
     def __init__(self, color):
         super().__init__(color, 'knight')
 
     def is_valid_move(self, board, start, end):
-        dy = start[0] - end[0]
+        dy = abs(start[0] - end[0])
         dx = abs(start[1] - end[1])
 
-        return False
+        if dy == 1 and dx == 2:
+            return True
+        elif dy == 2 and dx == 1:
+            return True
+
 
 class Pawn(Piece):
     def __init__(self, color):
@@ -64,12 +115,9 @@ class Pawn(Piece):
 
     def is_valid_move(self, board, start, end):
         dy = start[0] - end[0]
-        if self.color == 'black':
+        if self.color == 'black': # black pawns move in opposite direction
             dy = -dy
         dx = abs(start[1] - end[1])
-
-        
-
 
         if dx == 0: # moving vertically
             if board[end[0]][end[1]] is None:
@@ -80,10 +128,3 @@ class Pawn(Piece):
         else: # capturing
             if board[end[0]][end[1]] is not None:
                 return True if dy == 1 and dx == 1 else False
-
-
-
-
-
-
-    

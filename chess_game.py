@@ -12,6 +12,7 @@ class Chess:
         self.window = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_icon(pygame.image.load('pieces/white_king.png'))  # Set a default icon
         pygame.display.set_caption("Chess")
+        self.font = pygame.font.SysFont(None, 32)
 
         self.selected_pos = None
         self.players_turn = 'white' 
@@ -59,7 +60,7 @@ class Chess:
         # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
         if self.board[y][x] is not None and self.players_turn == self.board[y][x].color:
             self.selected_pos = y, x
-            pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 2)
+            pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 4)
         return
     
     def drop_piece(self, y, x):
@@ -115,6 +116,10 @@ if __name__ == "__main__":
     env = Chess()
     running = True
     while running:
+
+        # env.draw_board()
+        # env.draw_pieces()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -123,14 +128,23 @@ if __name__ == "__main__":
                 pos = pygame.mouse.get_pos()
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.select_piece(y, x)
+                print(f"Clicked on (y, x) format: {y}, {x}")
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.drop_piece(y, x)
 
-        pygame.display.flip()
 
+        # pos = pygame.mouse.get_pos()
+        # x, y = pos[0], pos[1]
+        # x_square, y_square = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
+        # text = f"Mouse: ({y_square}, {x_square})"
+        # text_surface = env.font.render(text, True, (0, 0, 0))
+        # env.window.blit(text_surface, (x, y + 20))
+        
+
+        pygame.display.flip()
 
     pygame.quit()
 
