@@ -64,17 +64,50 @@ class Chess:
         return
     
     def drop_piece(self, y, x):
-        if self.selected_pos is not None:
+        if self.selected_pos  is not None:
             prev_y, prev_x = self.selected_pos
             piece = self.board[prev_y][prev_x]
 
-            if piece.is_valid_move(self.board, (prev_y, prev_x), (y, x)):
-                print("valid move")
-                if y != prev_y or x != prev_x:
+            move_type = piece.is_valid_move(self.board, (prev_y, prev_x), (y, x))
+            if move_type == "normal":
+
+                if y != prev_y or x != prev_x: # not click and drop check
+
                     self.board[y][x] = self.board[prev_y][prev_x]
                     self.board[prev_y][prev_x] = None
                     piece.has_moved = True
+
                 self.update_player_turn()   
+            elif move_type == "castle_kingside":
+
+                if y != prev_y or x != prev_x:
+
+                    # king movement
+                    self.board[y][x] = self.board[prev_y][prev_x]
+                    self.board[prev_y][prev_x] = None
+                    piece.has_moved = True
+
+                    # rook movement
+                    self.board[y][x-1] = self.board[y][x+1]
+                    self.board[y][x+1] = None
+                    self.board[y][x-1].has_moved = True
+
+                self.update_player_turn()
+            elif move_type == "castle_queenside":
+
+                if y != prev_y or x != prev_x:
+                
+                    # king movement
+                    self.board[y][x] = self.board[prev_y][prev_x]
+                    self.board[prev_y][prev_x] = None
+                    piece.has_moved = True
+
+                    # rook movement
+                    self.board[y][x+1] = self.board[y][x-2]
+                    self.board[y][x-2] = None
+                    self.board[y][x+1].has_moved = True
+
+                self.update_player_turn()
 
             self.selected_pos = None
             self.draw_board()
@@ -128,7 +161,7 @@ if __name__ == "__main__":
                 pos = pygame.mouse.get_pos()
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.select_piece(y, x)
-                print(f"Clicked on (y, x) format: {y}, {x}")
+                # print(f"Clicked on (y, x) format: {y}, {x}")
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
@@ -142,10 +175,7 @@ if __name__ == "__main__":
         # text = f"Mouse: ({y_square}, {x_square})"
         # text_surface = env.font.render(text, True, (0, 0, 0))
         # env.window.blit(text_surface, (x, y + 20))
-        
 
         pygame.display.flip()
 
     pygame.quit()
-
-
