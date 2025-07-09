@@ -93,7 +93,7 @@ class Rook(Piece):
         dx = end[1] - start[1]
 
         if (dx == 0 and dy == 0) or (dx != 0 and dy != 0):
-            return False
+            return "invalid"
         
         # sign checker
         # 1 - 0 = 1 for positive step direction, 0 - 1 = -1 for negative
@@ -106,13 +106,13 @@ class Rook(Piece):
         # check for obstacles up until but not including ending position so rook doesn"t jump over pieces
         while (y, x) != end:
             if board[y][x] is not None:
-                return False
+                return "invalid"
             y += step_y
             x += step_x
 
         # dont capture own piece
         if board[end[0]][end[1]] is not None and board[end[0]][end[1]].color == self.color:
-            return False
+            return "invalid"
         
         return "normal"
 
@@ -125,7 +125,7 @@ class Bishop(Piece):
         dx = end[1] - start[1]
 
         if abs(dy) != abs(dx):
-            return False
+            return "invalid"
         
         step_y = 1 if dy > 0 else -1
         step_x = 1 if dx > 0 else -1
@@ -136,13 +136,13 @@ class Bishop(Piece):
         # check for obstacles up until but not including ending position so bishop doesn"t jump over pieces
         while (y, x) != end: 
             if board[y][x] is not None:
-                return False
+                return "invalid"
             y += step_y
             x += step_x
             
         # dont capture own piece
         if board[end[0]][end[1]] is not None and board[end[0]][end[1]].color == self.color:
-            return False
+            return "invalid"
         
         return "normal"
 
@@ -153,6 +153,10 @@ class Knight(Piece):
     def is_valid_move(self, board, start, end):
         dy = abs(start[0] - end[0])
         dx = abs(start[1] - end[1])
+
+        # dont capture own piece
+        if board[end[0]][end[1]] is not None and board[end[0]][end[1]].color == self.color:
+            return "invalid"
 
         if dy == 1 and dx == 2:
             return "normal"
@@ -177,5 +181,5 @@ class Pawn(Piece):
                 else:
                     return "normal" if dy == 1 and dx == 0 else "invalid"
         else: # capturing
-            if board[end[0]][end[1]] is not None:
+            if board[end[0]][end[1]] is not None and board[end[0]][end[1]].color != self.color:
                 return "normal" if dy == 1 and dx == 1 else "invalid"
