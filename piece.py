@@ -81,7 +81,7 @@ class Queen(Piece):
         super().__init__(color, "queen")
 
     def is_valid_move(self, board, start, end):
-        return Rook.is_valid_move(self, board, start, end) or Bishop.is_valid_move(self, board, start, end)
+        return 'normal' if Rook.is_valid_move(self, board, start, end) == 'normal' or Bishop.is_valid_move(self, board, start, end) == 'normal' else 'invalid'
 
 class Rook(Piece):
     def __init__(self, color):
