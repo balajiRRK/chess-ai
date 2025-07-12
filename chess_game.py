@@ -4,12 +4,12 @@ from piece import King, Queen, Rook, Bishop, Knight, Pawn
 pygame.init()
 
 class Chess:
-    def __init__(self, screen_width=800, screen_height=800, block_size=100):
-        self.SCREEN_WIDTH = screen_width
-        self.SCREEN_HEIGHT = screen_height
-        self.BLOCK_SIZE = block_size
+    def __init__(self, screen_length=1000):
+        self.SCREEN_LENGTH = screen_length # should be multiple of 8
+        self.BLOCK_SIZE = self.SCREEN_LENGTH // 8
 
-        self.window = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.window = pygame.display.set_mode((self.SCREEN_LENGTH, self.SCREEN_LENGTH))
+
         pygame.display.set_icon(pygame.image.load('pieces/white_king.png'))  # Set a default icon
         pygame.display.set_caption("Chess")
         self.font = pygame.font.SysFont(None, 32)
@@ -20,20 +20,20 @@ class Chess:
         # load piece images
         self.pieces = {
             'white': {
-                'king': pygame.transform.scale(pygame.image.load('pieces/white_king.png'), (100, 100)),
-                'queen': pygame.transform.scale(pygame.image.load('pieces/white_queen.png'), (100, 100)),
-                'rook': pygame.transform.scale(pygame.image.load('pieces/white_rook.png'), (100, 100)),
-                'bishop': pygame.transform.scale(pygame.image.load('pieces/white_bishop.png'), (100, 100)),
-                'knight': pygame.transform.scale(pygame.image.load('pieces/white_knight.png'), (100, 100)),
-                'pawn': pygame.transform.scale(pygame.image.load('pieces/white_pawn.png'), (100, 100))
+                'king': pygame.transform.scale(pygame.image.load('pieces/white_king.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'queen': pygame.transform.scale(pygame.image.load('pieces/white_queen.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'rook': pygame.transform.scale(pygame.image.load('pieces/white_rook.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'bishop': pygame.transform.scale(pygame.image.load('pieces/white_bishop.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'knight': pygame.transform.scale(pygame.image.load('pieces/white_knight.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'pawn': pygame.transform.scale(pygame.image.load('pieces/white_pawn.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE))
             },
             'black': {
-                'king': pygame.transform.scale(pygame.image.load('pieces/black_king.png'), (100, 100)),
-                'queen': pygame.transform.scale(pygame.image.load('pieces/black_queen.png'), (100, 100)),
-                'rook': pygame.transform.scale(pygame.image.load('pieces/black_rook.png'), (100, 100)),
-                'bishop': pygame.transform.scale(pygame.image.load('pieces/black_bishop.png'), (100, 100)),
-                'knight': pygame.transform.scale(pygame.image.load('pieces/black_knight.png'), (100, 100)),
-                'pawn': pygame.transform.scale(pygame.image.load('pieces/black_pawn.png'), (100, 100))
+                'king': pygame.transform.scale(pygame.image.load('pieces/black_king.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'queen': pygame.transform.scale(pygame.image.load('pieces/black_queen.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'rook': pygame.transform.scale(pygame.image.load('pieces/black_rook.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'bishop': pygame.transform.scale(pygame.image.load('pieces/black_bishop.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'knight': pygame.transform.scale(pygame.image.load('pieces/black_knight.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE)),
+                'pawn': pygame.transform.scale(pygame.image.load('pieces/black_pawn.png'), (self.BLOCK_SIZE, self.BLOCK_SIZE))
             }
         }
 
@@ -108,59 +108,6 @@ class Chess:
                 self.selected_pos = end_y, end_x
                 pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 4)
 
-    # def select_piece(self, y, x):
-    #     # if piece exists on clicked square and if players_turn matches the color of the piece selected and if piece not already selected
-    #     if self.board[y][x] is not None and self.players_turn == self.board[y][x].color:
-    #         self.selected_pos = y, x
-    #         pygame.draw.rect(self.window, (255, 0, 0), (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE, self.BLOCK_SIZE, self.BLOCK_SIZE), 4)
-    
-    # def drop_piece(self, y, x):
-    #     if self.selected_pos  is not None:
-    #         prev_y, prev_x = self.selected_pos
-    #         piece = self.board[prev_y][prev_x]
-
-    #         if y == prev_y or x == prev_x: # not click and drop check
-    #             return
-            
-    #         move_type = piece.is_valid_move(self.board, (prev_y, prev_x), (y, x))
-    #         if move_type == "normal":
-
-    #             self.board[y][x] = self.board[prev_y][prev_x]
-    #             self.board[prev_y][prev_x] = None
-    #             piece.has_moved = True
-
-    #             self.update_player_turn()   
-    #         elif move_type == "castle_kingside":
-
-    #             # king movement
-    #             self.board[y][x] = self.board[prev_y][prev_x]
-    #             self.board[prev_y][prev_x] = None
-    #             piece.has_moved = True
-
-    #             # rook movement
-    #             self.board[y][x-1] = self.board[y][x+1]
-    #             self.board[y][x+1] = None
-    #             self.board[y][x-1].has_moved = True
-
-    #             self.update_player_turn()
-    #         elif move_type == "castle_queenside":
-
-    #             # king movement
-    #             self.board[y][x] = self.board[prev_y][prev_x]
-    #             self.board[prev_y][prev_x] = None
-    #             piece.has_moved = True
-
-    #             # rook movement
-    #             self.board[y][x+1] = self.board[y][x-2]
-    #             self.board[y][x-2] = None
-    #             self.board[y][x+1].has_moved = True
-
-    #             self.update_player_turn()
-
-    #         self.selected_pos = None
-    #         self.draw_board()
-    #         self.draw_pieces()
-
     def draw_board(self):
         brown = (180, 135, 98)
         white = (255, 255, 255)
@@ -181,15 +128,15 @@ class Chess:
                     self.window.blit(self.pieces[piece.color][piece.type], (x * self.BLOCK_SIZE, y * self.BLOCK_SIZE))
     
     def update_player_turn(self):
-        if self.players_turn == 'white':
-            self.players_turn = 'black'
+        if self.players_turn == "white":
+            self.players_turn = "black"
         else:
-            self.players_turn = 'white'
+            self.players_turn = "white"
 
 
 # ------- MANUAL Chess -------
 
-# only execute if game_env file was executed, not if the file is imported
+# only execute if chess_game.py file was executed, not if the file is imported
 if __name__ == "__main__": 
     env = Chess()
     running = True
@@ -213,6 +160,7 @@ if __name__ == "__main__":
                 x, y = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
                 env.move(y, x)
 
+        # Square coordinates display
         # pos = pygame.mouse.get_pos()
         # x, y = pos[0], pos[1]
         # x_square, y_square = pos[0] // env.BLOCK_SIZE, pos[1] // env.BLOCK_SIZE
